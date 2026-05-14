@@ -1,0 +1,23 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+publish/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# Docker
+.dockerignore
+
+# Environment
+.env
