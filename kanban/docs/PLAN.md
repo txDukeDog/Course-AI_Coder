@@ -51,33 +51,33 @@
 ## Part 3: Frontend (Kanban UI)
 
 ### Substeps
-- [ ] Create Next.js 15 app in `frontend/` with TypeScript, Tailwind CSS, App Router, configured for static export (`output: 'export'` in `next.config.ts`)
-- [ ] Create `frontend/AGENTS.md` documenting the frontend structure for future agents
-- [ ] Implement Kanban board at `/`:
-  - [ ] 5 columns with default names: Backlog, Todo, In Progress, Review, Done
-  - [ ] Inline column renaming (click name to edit)
-  - [ ] Cards display title and details
-  - [ ] Drag-and-drop cards between columns using `@dnd-kit/core`
-  - [ ] "Add card" button per column — opens a simple inline form (title + details)
-  - [ ] Delete card (icon/button on card)
-  - [ ] Board pre-populated with dummy data on load (at least 2 cards per column)
-- [ ] Apply the AGENTS.md color scheme throughout:
+- [x] Create Next.js 15 app in `frontend/` with TypeScript, Tailwind CSS, App Router, configured for static export (`output: 'export'` in `next.config.ts`)
+- [x] Create `frontend/AGENTS.md` documenting the frontend structure for future agents
+- [x] Implement Kanban board at `/`:
+  - [x] 5 columns with default names: Backlog, Todo, In Progress, Review, Done
+  - [x] Inline column renaming (click name to edit)
+  - [x] Cards display title and details
+  - [x] Drag-and-drop cards between columns using `@dnd-kit/core`
+  - [x] "Add card" button per column — opens a simple inline form (title + details)
+  - [x] Delete card (icon/button on card)
+  - [x] Board pre-populated with dummy data on load (at least 2 cards per column)
+- [x] Apply the AGENTS.md color scheme throughout:
   - Accent Yellow `#ecad0a`, Blue Primary `#209dd7`, Purple Secondary `#753991`, Dark Navy `#032147`, Gray Text `#888888`
-- [ ] Set up Jest + React Testing Library for unit tests
-- [ ] Write unit tests for: initial dummy data render, column rename, add card, delete card, drag-and-drop state update
-- [ ] Update `Dockerfile` multi-stage build:
+- [x] Set up Jest + React Testing Library for unit tests
+- [x] Write unit tests for: initial dummy data render, column rename, add card, delete card, drag-and-drop state update
+- [x] Update `Dockerfile` multi-stage build:
   - Stage 1 (`frontend-build`): Node 22 — install deps, run `next build`, output to `frontend/out/`
   - Stage 2 (`build`): .NET 9 SDK — build and publish backend
   - Final (`runtime`): copy backend publish + `frontend/out/` into container
-- [ ] Configure .NET to serve Next.js static files from `wwwroot/` at `/` with SPA fallback (unknown routes → `index.html`)
+- [x] Configure .NET to serve Next.js static files from `wwwroot/` at `/` with SPA fallback (unknown routes → `index.html`)
 
 ### Tests
-- [ ] Unit: initial dummy data renders correctly (column names, card count)
-- [ ] Unit: renaming a column updates the displayed name
-- [ ] Unit: adding a card appends it to the correct column
-- [ ] Unit: deleting a card removes it from the list
-- [ ] Unit: moving a card between columns updates column membership
-- [ ] Integration: `GET /` serves the Next.js app (returns HTML with expected content)
+- [x] Unit: initial dummy data renders correctly (column names, card count)
+- [x] Unit: renaming a column updates the displayed name
+- [x] Unit: adding a card appends it to the correct column
+- [x] Unit: deleting a card removes it from the list
+- [x] Unit: moving a card between columns updates column membership
+- [x] Integration: `GET /` serves the Next.js app (returns HTML with expected content)
 
 ### Success criteria
 - `http://localhost:8080` displays the Kanban board with dummy data
