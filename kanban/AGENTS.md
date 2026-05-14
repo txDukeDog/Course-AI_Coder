@@ -67,3 +67,4 @@ For the MVP, this will run locally (in a docker container)
 
 All documents for planning and executing this project will be in the docs/ directory.
 Please review the docs/PLAN.md document before proceeding.
+Ignore and wait to complete step 8 and further.

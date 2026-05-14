@@ -1,6 +1,6 @@
 import type { Column } from './types';
 
-export function moveCard(columns: Column[], cardId: string, destColumnId: string): Column[] {
+export function moveCard(columns: Column[], cardId: number, destColumnId: number): Column[] {
   const sourceCol = columns.find(col => col.cards.some(c => c.id === cardId));
   if (!sourceCol || sourceCol.id === destColumnId) return columns;
   const card = sourceCol.cards.find(c => c.id === cardId)!;

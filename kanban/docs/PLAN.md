@@ -176,20 +176,20 @@
 ## Part 7: Frontend + Backend Integration
 
 ### Substeps
-- [ ] Remove all in-memory dummy data; replace with API-driven state
-- [ ] On board mount: `GET /api/board` to load initial state
-- [ ] Column rename: `PUT /api/columns/{id}`
-- [ ] Add card: `POST /api/cards`
-- [ ] Delete card: `DELETE /api/cards/{id}`
-- [ ] Move card (drag-and-drop drop): `PUT /api/cards/{id}` with updated `columnId` and `position`
-- [ ] Edit card (click card to edit title/details): `PUT /api/cards/{id}`
-- [ ] Show a minimal loading state while fetching; show a simple error message on failure
-- [ ] Attach JWT to all API requests via an Authorization header
-- [ ] Install Playwright; write end-to-end tests
+- [x] Remove all in-memory dummy data; replace with API-driven state
+- [x] On board mount: `GET /api/board` to load initial state
+- [x] Column rename: `PUT /api/columns/{id}`
+- [x] Add card: `POST /api/cards`
+- [x] Delete card: `DELETE /api/cards/{id}`
+- [x] Move card (drag-and-drop drop): `PUT /api/cards/{id}` with updated `columnId` and `position`
+- [x] Edit card (click card to edit title/details): `PUT /api/cards/{id}`
+- [x] Show a minimal loading state while fetching; show a simple error message on failure
+- [x] Attach JWT to all API requests via an Authorization header
+- [x] Install Playwright; write end-to-end tests
 
 ### Tests
-- [ ] Playwright: full flow — login → view board → add card → rename column → move card → edit card → delete card → logout
-- [ ] Playwright: page reload after mutations preserves state (persistence confirmed)
+- [x] Playwright: full flow — login → view board → add card → rename column → move card → edit card → delete card → logout
+- [x] Playwright: page reload after mutations preserves state (persistence confirmed)
 
 ### Success criteria
 - All CRUD operations persist through page reloads

@@ -10,10 +10,11 @@ interface Props {
   column: ColumnType;
   onRename: (name: string) => void;
   onAddCard: (title: string, details: string) => void;
-  onDeleteCard: (cardId: string) => void;
+  onDeleteCard: (cardId: number) => void;
+  onEditCard: (cardId: number, title: string, details: string) => void;
 }
 
-export default function Column({ column, onRename, onAddCard, onDeleteCard }: Props) {
+export default function Column({ column, onRename, onAddCard, onDeleteCard, onEditCard }: Props) {
   const [editing, setEditing] = useState(false);
   const [nameValue, setNameValue] = useState(column.name);
   const [addingCard, setAddingCard] = useState(false);
@@ -63,6 +64,7 @@ export default function Column({ column, onRename, onAddCard, onDeleteCard }: Pr
             key={card.id}
             card={card}
             onDelete={() => onDeleteCard(card.id)}
+            onEdit={(title, details) => onEditCard(card.id, title, details)}
           />
         ))}
 

@@ -19,5 +19,5 @@ export default function Home() {
   }
 
   if (!token) return null;
-  return <Board onLogout={handleLogout} />;
+  return <Board token={token} onLogout={handleLogout} />;
 }

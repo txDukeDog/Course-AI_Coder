@@ -17,7 +17,11 @@
       "PowerShell(curl *)",
       "PowerShell(dotnet tool install *)",
       "Bash(dotnet ef *)",
-      "PowerShell(dotnet ef migrations *)"
+      "PowerShell(dotnet ef migrations *)",
+      "Bash(npx jest *)",
+      "Bash(dir C:\\\\z\\\\dev\\\\Udemy\\\\01_AI_Coder\\\\Course-AI_Coder\\\\kanban\\\\frontend *)",
+      "Bash(npm install *)",
+      "Bash(docker build *)"
     ]
   }
 }
