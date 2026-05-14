@@ -92,27 +92,27 @@
 ## Part 4: Fake User Sign-in
 
 ### Substeps
-- [ ] Add `POST /api/auth/login` backend endpoint:
+- [x] Add `POST /api/auth/login` backend endpoint:
   - Accepts `{ "username": "string", "password": "string" }`
   - Validates against hardcoded credentials (`user` / `password`)
   - Returns a signed JWT on success; 401 on failure
-- [ ] Add `POST /api/auth/logout` endpoint (client-side token clear; endpoint returns 200)
-- [ ] Configure JWT bearer authentication middleware in ASP.NET Core
-- [ ] Create login page at `/login` in Next.js:
+- [x] Add `POST /api/auth/logout` endpoint (client-side token clear; endpoint returns 200)
+- [x] Configure JWT bearer authentication middleware in ASP.NET Core
+- [x] Create login page at `/login` in Next.js:
   - Username + password fields, submit button
   - Shows error message on invalid credentials
   - Redirects to `/` on success; stores JWT in memory (not localStorage)
-- [ ] Protect the `/` route: unauthenticated users redirected to `/login`
-- [ ] Add logout button to the board page; clears token and redirects to `/login`
-- [ ] Write xUnit tests for login/logout endpoints
-- [ ] Write Jest tests for the login page component
+- [x] Protect the `/` route: unauthenticated users redirected to `/login`
+- [x] Add logout button to the board page; clears token and redirects to `/login`
+- [x] Write xUnit tests for login/logout endpoints
+- [x] Write Jest tests for the login page component
 
 ### Tests
-- [ ] `POST /api/auth/login` with `user`/`password` returns HTTP 200 with JWT
-- [ ] `POST /api/auth/login` with bad credentials returns HTTP 401
-- [ ] Unauthenticated `GET /api/board` returns HTTP 401 (forward-compatibility check)
-- [ ] Login page shows error on bad credentials (Jest)
-- [ ] Successful login navigates to board (Jest)
+- [x] `POST /api/auth/login` with `user`/`password` returns HTTP 200 with JWT
+- [x] `POST /api/auth/login` with bad credentials returns HTTP 401
+- [x] Unauthenticated `GET /api/board` returns HTTP 401 (forward-compatibility check)
+- [x] Login page shows error on bad credentials (Jest)
+- [x] Successful login navigates to board (Jest)
 
 ### Success criteria
 - Navigating to `http://localhost:8080` redirects to `/login`

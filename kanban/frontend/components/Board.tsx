@@ -7,7 +7,11 @@ import { initialColumns } from '@/lib/data';
 import { moveCard } from '@/lib/board';
 import Column from './Column';
 
-export default function Board() {
+interface Props {
+  onLogout: () => void;
+}
+
+export default function Board({ onLogout }: Props) {
   const [columns, setColumns] = useState<ColumnType[]>(initialColumns);
   const [activeCard, setActiveCard] = useState<CardType | null>(null);
 
@@ -45,9 +49,17 @@ export default function Board() {
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
-      <header className="bg-[#032147] px-8 py-4 border-b-4 border-[#ecad0a] flex-shrink-0">
-        <h1 className="text-white text-2xl font-bold tracking-tight">My Project</h1>
-        <p className="text-[#888888] text-sm mt-0.5">Kanban Board</p>
+      <header className="bg-[#032147] px-8 py-4 border-b-4 border-[#ecad0a] flex-shrink-0 flex items-center justify-between">
+        <div>
+          <h1 className="text-white text-2xl font-bold tracking-tight">My Project</h1>
+          <p className="text-[#888888] text-sm mt-0.5">Kanban Board</p>
+        </div>
+        <button
+          onClick={onLogout}
+          className="text-white/70 hover:text-white text-sm transition-colors cursor-pointer"
+        >
+          Sign out
+        </button>
       </header>
 
       <div className="flex-1 overflow-x-auto overflow-y-hidden p-6">

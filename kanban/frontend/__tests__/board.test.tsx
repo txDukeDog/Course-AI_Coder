@@ -6,7 +6,7 @@ import { initialColumns } from '../lib/data';
 
 describe('Board renders initial data', () => {
   it('shows all five column names', () => {
-    render(<Board />);
+    render(<Board onLogout={jest.fn()} />);
     expect(screen.getByText('Backlog')).toBeInTheDocument();
     expect(screen.getByText('Todo')).toBeInTheDocument();
     expect(screen.getByText('In Progress')).toBeInTheDocument();
@@ -15,7 +15,7 @@ describe('Board renders initial data', () => {
   });
 
   it('renders dummy cards in the correct columns', () => {
-    render(<Board />);
+    render(<Board onLogout={jest.fn()} />);
     expect(screen.getByText('Set up CI/CD pipeline')).toBeInTheDocument();
     expect(screen.getByText('Initial project setup')).toBeInTheDocument();
   });
@@ -23,7 +23,7 @@ describe('Board renders initial data', () => {
 
 describe('Column rename', () => {
   it('updates the displayed name on Enter', async () => {
-    render(<Board />);
+    render(<Board onLogout={jest.fn()} />);
     await userEvent.click(screen.getByRole('button', { name: 'Backlog' }));
     const input = screen.getByDisplayValue('Backlog');
     await userEvent.clear(input);
@@ -36,7 +36,7 @@ describe('Column rename', () => {
 
 describe('Add card', () => {
   it('appends a new card to the column', async () => {
-    render(<Board />);
+    render(<Board onLogout={jest.fn()} />);
     await userEvent.click(screen.getAllByRole('button', { name: /add card/i })[0]);
     await userEvent.type(screen.getByPlaceholderText('Card title'), 'Brand new task');
     await userEvent.click(screen.getByRole('button', { name: 'Add' }));
@@ -46,7 +46,7 @@ describe('Add card', () => {
 
 describe('Delete card', () => {
   it('removes the card from the board', async () => {
-    render(<Board />);
+    render(<Board onLogout={jest.fn()} />);
     expect(screen.getByText('Set up CI/CD pipeline')).toBeInTheDocument();
     const deleteButtons = screen.getAllByLabelText('Delete card');
     await userEvent.click(deleteButtons[0]);
