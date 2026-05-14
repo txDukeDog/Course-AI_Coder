@@ -126,15 +126,15 @@
 ## Part 5: Database Modeling
 
 ### Substeps
-- [ ] Design SQLite schema:
+- [x] Design SQLite schema:
   - `users` (id, username, password_hash)
   - `boards` (id, user_id, name)
   - `columns` (id, board_id, name, position)
   - `cards` (id, column_id, title, details, position)
-- [ ] Save DDL as `docs/schema.sql`
-- [ ] Save JSON description as `docs/schema.json`
-- [ ] Document schema rationale, relationships, and migration approach in `docs/DATABASE.md`
-- [ ] Present schema to user for sign-off
+- [x] Save DDL as `docs/schema.sql`
+- [x] Save JSON description as `docs/schema.json`
+- [x] Document schema rationale, relationships, and migration approach in `docs/DATABASE.md`
+- [x] Present schema to user for sign-off
 
 ### Success criteria
 - `docs/schema.sql`, `docs/schema.json`, and `docs/DATABASE.md` exist and are consistent
@@ -145,26 +145,26 @@
 ## Part 6: Backend API
 
 ### Substeps
-- [ ] Add Entity Framework Core 9 with `Microsoft.EntityFrameworkCore.Sqlite` provider
-- [ ] Create EF Core entity models and `DbContext` matching the approved schema
-- [ ] Apply migrations automatically at startup; create DB file if it doesn't exist
-- [ ] Seed initial data on first run (one board, 5 columns with default names, at least 2 sample cards per column) for the hardcoded user
-- [ ] Implement API endpoints (all require valid JWT):
+- [x] Add Entity Framework Core 9 with `Microsoft.EntityFrameworkCore.Sqlite` provider
+- [x] Create EF Core entity models and `DbContext` matching the approved schema
+- [x] Apply migrations automatically at startup; create DB file if it doesn't exist
+- [x] Seed initial data on first run (one board, 5 columns with default names, at least 2 sample cards per column) for the hardcoded user
+- [x] Implement API endpoints (all require valid JWT):
   - `GET /api/board` — return full board for the authenticated user (columns with cards, ordered by position)
   - `PUT /api/columns/{id}` — rename a column `{ "name": "string" }`
   - `POST /api/cards` — create card `{ "columnId": int, "title": "string", "details": "string" }`
   - `PUT /api/cards/{id}` — update card `{ "title": "string", "details": "string", "columnId": int, "position": int }`
   - `DELETE /api/cards/{id}` — delete card
-- [ ] Write xUnit integration tests using an in-memory or test SQLite database
+- [x] Write xUnit integration tests using an in-memory or test SQLite database
 
 ### Tests
-- [ ] `GET /api/board` returns correct structure with seeded data
-- [ ] `PUT /api/columns/{id}` renames the column; verified by subsequent `GET /api/board`
-- [ ] `POST /api/cards` creates a card and returns it with an id
-- [ ] `PUT /api/cards/{id}` updates title, details, column assignment, and position
-- [ ] `DELETE /api/cards/{id}` removes the card; confirmed absent in subsequent `GET /api/board`
-- [ ] All endpoints return 401 when called without a valid JWT
-- [ ] DB file is created on first run if absent
+- [x] `GET /api/board` returns correct structure with seeded data
+- [x] `PUT /api/columns/{id}` renames the column; verified by subsequent `GET /api/board`
+- [x] `POST /api/cards` creates a card and returns it with an id
+- [x] `PUT /api/cards/{id}` updates title, details, column assignment, and position
+- [x] `DELETE /api/cards/{id}` removes the card; confirmed absent in subsequent `GET /api/board`
+- [x] All endpoints return 401 when called without a valid JWT
+- [x] DB file is created on first run if absent
 
 ### Success criteria
 - All API endpoints behave correctly per the tests above

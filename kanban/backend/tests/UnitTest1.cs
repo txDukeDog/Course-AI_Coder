@@ -1,12 +1,10 @@
-using Microsoft.AspNetCore.Mvc.Testing;
-
 namespace KanbanApi.Tests;
 
-public class EndpointTests : IClassFixture<WebApplicationFactory<Program>>
+public class EndpointTests : IClassFixture<TestWebApplicationFactory>
 {
     private readonly HttpClient _client;
 
-    public EndpointTests(WebApplicationFactory<Program> factory)
+    public EndpointTests(TestWebApplicationFactory factory)
     {
         _client = factory.CreateClient();
     }

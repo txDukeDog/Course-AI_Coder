@@ -1,15 +1,13 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using Microsoft.AspNetCore.Mvc.Testing;
-
 namespace KanbanApi.Tests;
 
-public class AuthTests : IClassFixture<WebApplicationFactory<Program>>
+public class AuthTests : IClassFixture<TestWebApplicationFactory>
 {
     private readonly HttpClient _client;
 
-    public AuthTests(WebApplicationFactory<Program> factory)
+    public AuthTests(TestWebApplicationFactory factory)
     {
         _client = factory.CreateClient();
     }

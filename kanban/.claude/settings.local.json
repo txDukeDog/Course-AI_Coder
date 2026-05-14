@@ -14,7 +14,10 @@
       "PowerShell($r1 = Invoke-WebRequest -Uri \"http://localhost:8080\" -UseBasicParsing; Write-Host \"/ Status: $\\($r1.StatusCode\\) ContentType: $\\($r1.Headers['Content-Type']\\)\"; $r2 = Invoke-WebRequest -Uri \"http://localhost:8080/api/health\" -UseBasicParsing; Write-Host \"/api/health Status: $\\($r2.StatusCode\\) Body: $\\($r2.Content\\)\")",
       "PowerShell(Get-ChildItem \"C:\\\\z\\\\dev\\\\Udemy\\\\01_AI_Coder\\\\Course-AI_Coder\\\\kanban\\\\frontend\" -Recurse -Depth 3 | Where-Object { $_.FullName -notmatch \"node_modules\" -and $_.FullName -notmatch \"\\\\.next\" } | Select-Object FullName)",
       "PowerShell(Out-Null *)",
-      "PowerShell(curl *)"
+      "PowerShell(curl *)",
+      "PowerShell(dotnet tool install *)",
+      "Bash(dotnet ef *)",
+      "PowerShell(dotnet ef migrations *)"
     ]
   }
 }
