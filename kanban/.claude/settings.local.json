@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(docker compose version *)",
+      "PowerShell(dotnet new webapi *)",
+      "PowerShell(dotnet new xunit *)",
+      "PowerShell(dotnet new sln -n KanbanApi --output \"C:\\\\z\\\\dev\\\\Udemy\\\\01_AI_Coder\\\\Course-AI_Coder\\\\kanban\\\\backend\" 2>&1; dotnet sln \"C:\\\\z\\\\dev\\\\Udemy\\\\01_AI_Coder\\\\Course-AI_Coder\\\\kanban\\\\backend\\\\KanbanApi.sln\" add \"C:\\\\z\\\\dev\\\\Udemy\\\\01_AI_Coder\\\\Course-AI_Coder\\\\kanban\\\\backend\\\\KanbanApi.csproj\" \"C:\\\\z\\\\dev\\\\Udemy\\\\01_AI_Coder\\\\Course-AI_Coder\\\\kanban\\\\backend\\\\tests\\\\KanbanApi.Tests.csproj\" 2>&1)",
+      "PowerShell(dotnet add *)",
+      "PowerShell(New-Item *)",
+      "PowerShell(dotnet test *)",
+      "PowerShell(dotnet build *)",
+      "PowerShell(Invoke-WebRequest -Uri \"http://localhost:8080\" -UseBasicParsing | Select-Object StatusCode, @{N='ContentType';E={$_.Headers['Content-Type']}}; Invoke-WebRequest -Uri \"http://localhost:8080/api/health\" -UseBasicParsing | Select-Object StatusCode, Content)",
+      "PowerShell(docker compose up *)",
+      "PowerShell($r1 = Invoke-WebRequest -Uri \"http://localhost:8080\" -UseBasicParsing; Write-Host \"/ Status: $\\($r1.StatusCode\\) ContentType: $\\($r1.Headers['Content-Type']\\)\"; $r2 = Invoke-WebRequest -Uri \"http://localhost:8080/api/health\" -UseBasicParsing; Write-Host \"/api/health Status: $\\($r2.StatusCode\\) Body: $\\($r2.Content\\)\")"
+    ]
+  }
+}

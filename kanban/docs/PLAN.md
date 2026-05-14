@@ -20,24 +20,24 @@
 ## Part 2: Scaffolding
 
 ### Substeps
-- [ ] Create `.gitignore` covering: .NET build artifacts, Node/Next.js (`node_modules`, `.next`, `out`), SQLite (`.db`, `.db-shm`, `.db-wal`), Docker artifacts, `.env`
-- [ ] Create `backend/` with a minimal ASP.NET Core Web API project (dotnet new webapi, .NET 9)
-- [ ] Configure backend to serve a static "Hello World" HTML page at `GET /`
-- [ ] Add `GET /api/health` returning `{ "status": "ok" }`
-- [ ] Write xUnit test project in `backend/tests/` verifying the health endpoint
-- [ ] Create `Dockerfile` at project root with multi-stage build:
+- [x] Create `.gitignore` covering: .NET build artifacts, Node/Next.js (`node_modules`, `.next`, `out`), SQLite (`.db`, `.db-shm`, `.db-wal`), Docker artifacts, `.env`
+- [x] Create `backend/` with a minimal ASP.NET Core Web API project (dotnet new webapi, .NET 9)
+- [x] Configure backend to serve a static "Hello World" HTML page at `GET /`
+- [x] Add `GET /api/health` returning `{ "status": "ok" }`
+- [x] Write xUnit test project in `backend/tests/` verifying the health endpoint
+- [x] Create `Dockerfile` at project root with multi-stage build:
   - Stage 1 (`build`): .NET 9 SDK — restore, build, publish backend to `/app/publish`
   - Final (`runtime`): .NET 9 ASP.NET runtime — copy published output, expose port 8080
-- [ ] Create `docker-compose.yml` mapping host port 8080 to container port 8080
-- [ ] Create `scripts/start.sh` (Mac/Linux): builds image and runs container via docker-compose
-- [ ] Create `scripts/stop.sh` (Mac/Linux): stops and removes container via docker-compose
-- [ ] Create `scripts/start.ps1` (Windows): equivalent PowerShell script
-- [ ] Create `scripts/stop.ps1` (Windows): equivalent PowerShell script
+- [x] Create `docker-compose.yml` mapping host port 8080 to container port 8080
+- [x] Create `scripts/start.sh` (Mac/Linux): builds image and runs container via docker-compose
+- [x] Create `scripts/stop.sh` (Mac/Linux): stops and removes container via docker-compose
+- [x] Create `scripts/start.ps1` (Windows): equivalent PowerShell script
+- [x] Create `scripts/stop.ps1` (Windows): equivalent PowerShell script
 
 ### Tests
-- [ ] `GET /api/health` returns HTTP 200 with `{ "status": "ok" }`
-- [ ] `GET /` returns HTTP 200 with HTML content
-- [ ] xUnit tests pass inside the container build
+- [x] `GET /api/health` returns HTTP 200 with `{ "status": "ok" }`
+- [x] `GET /` returns HTTP 200 with HTML content
+- [x] xUnit tests pass inside the container build
 
 ### Success criteria
 - Running `scripts/start` builds the image and starts the container with no errors

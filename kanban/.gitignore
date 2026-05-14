@@ -16,8 +16,5 @@ out/
 *.db-shm
 *.db-wal
 
-# Docker
-.dockerignore
-
 # Environment
 .env
