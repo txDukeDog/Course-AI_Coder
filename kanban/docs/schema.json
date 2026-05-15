@@ -1,11 +1,20 @@
 {
   "tables": [
     {
+      "name": "organizations",
+      "columns": [
+        { "name": "id",   "type": "INTEGER", "primaryKey": true, "autoIncrement": true },
+        { "name": "name", "type": "TEXT",    "notNull": true }
+      ]
+    },
+    {
       "name": "users",
       "columns": [
         { "name": "id",            "type": "INTEGER", "primaryKey": true, "autoIncrement": true },
         { "name": "username",      "type": "TEXT",    "notNull": true, "unique": true },
-        { "name": "password_hash", "type": "TEXT",    "notNull": true }
+        { "name": "password_hash", "type": "TEXT",    "notNull": true },
+        { "name": "role",          "type": "TEXT",    "notNull": true, "default": "user" },
+        { "name": "org_id",        "type": "INTEGER", "references": { "table": "organizations", "column": "id" } }
       ]
     },
     {
@@ -13,7 +22,8 @@
       "columns": [
         { "name": "id",      "type": "INTEGER", "primaryKey": true, "autoIncrement": true },
         { "name": "user_id", "type": "INTEGER", "notNull": true, "references": { "table": "users", "column": "id" } },
-        { "name": "name",    "type": "TEXT",    "notNull": true }
+        { "name": "name",    "type": "TEXT",    "notNull": true },
+        { "name": "org_id",  "type": "INTEGER", "references": { "table": "organizations", "column": "id" } }
       ]
     },
     {
@@ -34,6 +44,14 @@
         { "name": "details",   "type": "TEXT",    "notNull": true, "default": "" },
         { "name": "position",  "type": "INTEGER", "notNull": true }
       ]
+    },
+    {
+      "name": "user_board_access",
+      "columns": [
+        { "name": "user_id",  "type": "INTEGER", "notNull": true, "references": { "table": "users",  "column": "id" } },
+        { "name": "board_id", "type": "INTEGER", "notNull": true, "references": { "table": "boards", "column": "id" } }
+      ],
+      "primaryKey": ["user_id", "board_id"]
     }
   ]
 }

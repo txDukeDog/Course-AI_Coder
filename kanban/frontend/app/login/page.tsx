@@ -42,6 +42,9 @@ export default function LoginPage() {
         <div className="mb-6">
           <h1 className="text-[#032147] text-2xl font-bold">Sign in</h1>
           <p className="text-[#888888] text-sm mt-1">Kanban Project Board</p>
+          <p className="text-[#888888] text-xs mt-3 leading-relaxed">
+            Demo accounts: <span className="font-medium text-[#032147]">admin</span> / admin123 &middot; <span className="font-medium text-[#032147]">manager_a</span> / manager123 &middot; <span className="font-medium text-[#032147]">user</span> / password
+          </p>
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>

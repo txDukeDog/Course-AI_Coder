@@ -116,3 +116,37 @@ test('selected board persists after page reload', async ({ page }) => {
   await page.reload();
   await expect(page.getByText('Operations - Backlog task 1')).toBeVisible();
 });
+
+test('admin sees all boards in selector', async ({ page }) => {
+  await page.goto('/login');
+  await page.getByLabel('Username').fill('admin');
+  await page.getByLabel('Password').fill('admin123');
+  await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.waitForURL('/');
+  await page.getByRole('button', { name: 'Switch board' }).click();
+  await expect(page.getByRole('menuitem', { name: 'Alpha - Engineering' })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'Beta - Product' })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'Gamma - Research' })).toBeVisible();
+});
+
+test('manager_a sees only Alpha boards', async ({ page }) => {
+  await page.goto('/login');
+  await page.getByLabel('Username').fill('manager_a');
+  await page.getByLabel('Password').fill('manager123');
+  await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.waitForURL('/');
+  await page.getByRole('button', { name: 'Switch board' }).click();
+  await expect(page.getByRole('menuitem', { name: 'Alpha - Engineering' })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'Alpha - Design' })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'Alpha - Marketing' })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'Beta - Product' })).not.toBeVisible();
+});
+
+test('user sees only their assigned board', async ({ page }) => {
+  await page.goto('/login');
+  await page.getByLabel('Username').fill('user');
+  await page.getByLabel('Password').fill('password');
+  await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.waitForURL('/');
+  await expect(page.getByText('Alpha - Engineering')).toBeVisible();
+});

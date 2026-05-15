@@ -15,8 +15,9 @@ public class MultiBoardApiTests : IClassFixture<TestWebApplicationFactory>
         _anonClient = factory.CreateClient();
         _client = factory.CreateClient();
 
+        // manager_a has access to all 3 Alpha boards
         var loginRes = _client.PostAsync("/api/auth/login",
-            Json(new { username = "user", password = "password" })).GetAwaiter().GetResult();
+            Json(new { username = "manager_a", password = "manager123" })).GetAwaiter().GetResult();
         var body = loginRes.Content.ReadAsStringAsync().GetAwaiter().GetResult();
         var token = JsonDocument.Parse(body).RootElement.GetProperty("token").GetString()!;
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -29,12 +30,12 @@ public class MultiBoardApiTests : IClassFixture<TestWebApplicationFactory>
         JsonDocument.Parse(await res.Content.ReadAsStringAsync()).RootElement;
 
     [Fact]
-    public async Task GetBoards_ReturnsAtLeastFourBoards()
+    public async Task GetBoards_ReturnsAtLeastThreeBoards()
     {
         var res = await _client.GetAsync("/api/boards");
         Assert.Equal(HttpStatusCode.OK, res.StatusCode);
         var boards = (await ParseJson(res)).EnumerateArray().ToList();
-        Assert.True(boards.Count >= 4);
+        Assert.True(boards.Count >= 3);
         foreach (var b in boards)
         {
             Assert.True(b.GetProperty("id").GetInt32() > 0);

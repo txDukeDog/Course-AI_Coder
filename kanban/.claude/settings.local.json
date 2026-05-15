@@ -40,7 +40,11 @@
       "Bash(findstr /v \"node_modules\\\\|\\\\.next\\\\|out\\\\\\\\\")",
       "Bash(npm test *)",
       "Bash(npx tsc *)",
-      "Bash(grep -v \"__tests__\\\\|e2e\\\\\\\\\")"
+      "Bash(grep -v \"__tests__\\\\|e2e\\\\\\\\\")",
+      "Bash(dotnet tool *)",
+      "Bash(where dotnet-ef *)",
+      "Bash(export PATH=\"$PATH:$HOME/.dotnet/tools\")",
+      "Bash(dotnet-ef migrations *)"
     ]
   }
 }
