@@ -11,7 +11,10 @@ const mockBoard = { id: 1, name: 'My Project', columns: initialColumns };
 function setupFetch(postCardResponse?: object) {
   global.fetch = jest.fn((url: unknown, opts?: RequestInit) => {
     const u = url as string;
-    if (u.endsWith('/api/board')) {
+    if (u.endsWith('/api/boards') && (!opts?.method || opts.method === 'GET')) {
+      return Promise.resolve({ ok: true, json: () => Promise.resolve([{ id: 1, name: 'My Project' }]) });
+    }
+    if (u.match(/\/api\/boards\/\d+$/) && (!opts?.method || opts.method === 'GET')) {
       return Promise.resolve({ ok: true, json: () => Promise.resolve(mockBoard) });
     }
     if (u.includes('/api/cards') && opts?.method === 'POST') {

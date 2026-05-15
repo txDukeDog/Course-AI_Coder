@@ -48,7 +48,7 @@ public class AuthTests : IClassFixture<TestWebApplicationFactory>
     [Fact]
     public async Task Board_WithoutJwt_Returns401()
     {
-        var response = await _client.GetAsync("/api/board");
+        var response = await _client.GetAsync("/api/boards");
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }

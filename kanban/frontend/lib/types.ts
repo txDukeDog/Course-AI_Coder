@@ -17,3 +17,8 @@ export interface Board {
   name: string;
   columns: Column[];
 }
+
+export interface BoardSummary {
+  id: number;
+  name: string;
+}

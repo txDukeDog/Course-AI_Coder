@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from '@dnd-kit/core';
-import type { Board as BoardData, Card as CardType } from '@/lib/types';
+import type { Board as BoardData, BoardSummary, Card as CardType } from '@/lib/types';
 import { moveCard } from '@/lib/board';
 import { apiFetch } from '@/lib/api';
 import Column from './Column';
+import BoardSelector from './BoardSelector';
 
 interface Props {
   token: string;
@@ -13,18 +14,97 @@ interface Props {
 }
 
 export default function Board({ token, onLogout }: Props) {
+  const [boardList, setBoardList] = useState<BoardSummary[]>([]);
   const [board, setBoard] = useState<BoardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeCard, setActiveCard] = useState<CardType | null>(null);
+  const [renamingBoard, setRenamingBoard] = useState(false);
+  const [boardNameDraft, setBoardNameDraft] = useState('');
 
   useEffect(() => {
-    apiFetch(token, '/api/board')
-      .then(res => res.json())
-      .then(data => setBoard(data))
-      .catch(() => setError('Failed to load board. Please refresh.'))
-      .finally(() => setLoading(false));
+    initBoards();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
+
+  async function initBoards() {
+    try {
+      const res = await apiFetch(token, '/api/boards');
+      const list: BoardSummary[] = await res.json();
+      setBoardList(list);
+      if (list.length === 0) { setLoading(false); return; }
+      const saved = sessionStorage.getItem('kanban_board_id');
+      const id = saved && list.some(b => b.id === parseInt(saved))
+        ? parseInt(saved)
+        : list[0].id;
+      await switchBoard(id);
+    } catch {
+      setError('Failed to load boards. Please refresh.');
+      setLoading(false);
+    }
+  }
+
+  async function switchBoard(id: number) {
+    setLoading(true);
+    try {
+      const res = await apiFetch(token, `/api/boards/${id}`);
+      const data: BoardData = await res.json();
+      setBoard(data);
+      sessionStorage.setItem('kanban_board_id', String(id));
+    } catch {
+      setError('Failed to load board. Please refresh.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function createBoard(name: string) {
+    try {
+      const res = await apiFetch(token, '/api/boards', {
+        method: 'POST',
+        body: JSON.stringify({ name }),
+      });
+      const created: BoardSummary = await res.json();
+      setBoardList(prev => [...prev, created]);
+      await switchBoard(created.id);
+    } catch {
+      setError('Failed to create board.');
+    }
+  }
+
+  async function renameBoard(newName: string) {
+    if (!board) return;
+    const id = board.id;
+    const prevName = board.name;
+    setBoard(prev => prev && { ...prev, name: newName });
+    setBoardList(prev => prev.map(b => b.id === id ? { ...b, name: newName } : b));
+    setRenamingBoard(false);
+    try {
+      await apiFetch(token, `/api/boards/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ name: newName }),
+      });
+    } catch {
+      setBoard(prev => prev && { ...prev, name: prevName });
+      setBoardList(prev => prev.map(b => b.id === id ? { ...b, name: prevName } : b));
+      setError('Failed to rename board.');
+    }
+  }
+
+  async function deleteBoard() {
+    if (!board) return;
+    if (!confirm(`Delete "${board.name}"? This cannot be undone.`)) return;
+    const id = board.id;
+    try {
+      await apiFetch(token, `/api/boards/${id}`, { method: 'DELETE' });
+      const remaining = boardList.filter(b => b.id !== id);
+      setBoardList(remaining);
+      setBoard(null);
+      if (remaining.length > 0) await switchBoard(remaining[0].id);
+    } catch {
+      setError('Failed to delete board.');
+    }
+  }
 
   async function renameColumn(columnId: number, newName: string) {
     setBoard(prev => prev && {
@@ -123,10 +203,16 @@ export default function Board({ token, onLogout }: Props) {
     }
   }
 
+  function commitBoardRename() {
+    const trimmed = boardNameDraft.trim();
+    if (trimmed && trimmed !== board?.name) renameBoard(trimmed);
+    else setRenamingBoard(false);
+  }
+
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center bg-[#f0f4f8]">
-        <p className="text-[#888888]">Loading board...</p>
+        <p className="text-[#888888]">Loading...</p>
       </div>
     );
   }
@@ -134,10 +220,48 @@ export default function Board({ token, onLogout }: Props) {
   return (
     <div className="flex-1 flex flex-col min-h-0">
       <header className="bg-[#032147] px-8 py-4 border-b-4 border-[#ecad0a] flex-shrink-0 flex items-center justify-between">
-        <div>
-          <h1 className="text-white text-2xl font-bold tracking-tight">{board?.name ?? 'My Project'}</h1>
-          <p className="text-[#888888] text-sm mt-0.5">Kanban Board</p>
+        <div className="flex items-center gap-2">
+          {renamingBoard ? (
+            <input
+              autoFocus
+              value={boardNameDraft}
+              onChange={e => setBoardNameDraft(e.target.value)}
+              onBlur={commitBoardRename}
+              onKeyDown={e => {
+                if (e.key === 'Enter') commitBoardRename();
+                if (e.key === 'Escape') setRenamingBoard(false);
+              }}
+              aria-label="Board name"
+              className="text-white text-2xl font-bold bg-transparent border-b-2 border-[#ecad0a] outline-none tracking-tight"
+            />
+          ) : (
+            <button
+              onClick={() => { setBoardNameDraft(board?.name ?? ''); setRenamingBoard(true); }}
+              className="text-white text-2xl font-bold tracking-tight hover:text-white/80 transition-colors cursor-pointer"
+            >
+              {board?.name ?? 'Boards'}
+            </button>
+          )}
+
+          <BoardSelector
+            boards={boardList}
+            currentBoardId={board?.id ?? null}
+            onSelect={switchBoard}
+            onCreate={createBoard}
+          />
+
+          {boardList.length > 0 && board && (
+            <button
+              onClick={deleteBoard}
+              aria-label="Delete board"
+              title="Delete this board"
+              className="text-white/30 hover:text-red-400 transition-colors cursor-pointer text-xs ml-1"
+            >
+              &#10005;
+            </button>
+          )}
         </div>
+
         <button
           onClick={onLogout}
           className="text-white/70 hover:text-white text-sm transition-colors cursor-pointer"
@@ -153,33 +277,50 @@ export default function Board({ token, onLogout }: Props) {
         </div>
       )}
 
-      <div className="flex-1 overflow-x-auto overflow-y-hidden p-6">
-        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-          <div className="flex gap-5 h-full">
-            {(board?.columns ?? []).map(column => (
-              <Column
-                key={column.id}
-                column={column}
-                onRename={name => renameColumn(column.id, name)}
-                onAddCard={(title, details) => addCard(column.id, title, details)}
-                onDeleteCard={cardId => deleteCard(column.id, cardId)}
-                onEditCard={(cardId, title, details) => editCard(cardId, column.id, title, details)}
-              />
-            ))}
+      {!board ? (
+        <div className="flex-1 flex items-center justify-center bg-[#f0f4f8]">
+          <div className="text-center">
+            <p className="text-[#888888] mb-3">No boards yet.</p>
+            <button
+              onClick={() => {
+                const name = prompt('Board name:');
+                if (name?.trim()) createBoard(name.trim());
+              }}
+              className="bg-[#753991] text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-800 cursor-pointer"
+            >
+              Create your first board
+            </button>
           </div>
+        </div>
+      ) : (
+        <div className="flex-1 overflow-x-auto overflow-y-hidden p-6">
+          <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+            <div className="flex gap-5 h-full">
+              {board.columns.map(column => (
+                <Column
+                  key={column.id}
+                  column={column}
+                  onRename={name => renameColumn(column.id, name)}
+                  onAddCard={(title, details) => addCard(column.id, title, details)}
+                  onDeleteCard={cardId => deleteCard(column.id, cardId)}
+                  onEditCard={(cardId, title, details) => editCard(cardId, column.id, title, details)}
+                />
+              ))}
+            </div>
 
-          <DragOverlay>
-            {activeCard && (
-              <div className="bg-white rounded-lg border-l-4 border-l-[#753991] p-3 shadow-xl rotate-2 cursor-grabbing w-72 ring-1 ring-gray-100">
-                <span className="text-[#032147] font-medium text-sm">{activeCard.title}</span>
-                {activeCard.details && (
-                  <p className="text-[#888888] text-xs mt-1.5">{activeCard.details}</p>
-                )}
-              </div>
-            )}
-          </DragOverlay>
-        </DndContext>
-      </div>
+            <DragOverlay>
+              {activeCard && (
+                <div className="bg-white rounded-lg border-l-4 border-l-[#753991] p-3 shadow-xl rotate-2 cursor-grabbing w-72 ring-1 ring-gray-100">
+                  <span className="text-[#032147] font-medium text-sm">{activeCard.title}</span>
+                  {activeCard.details && (
+                    <p className="text-[#888888] text-xs mt-1.5">{activeCard.details}</p>
+                  )}
+                </div>
+              )}
+            </DragOverlay>
+          </DndContext>
+        </div>
+      )}
     </div>
   );
 }

@@ -78,3 +78,41 @@ test('board requires auth — redirects when not logged in', async ({ page }) =>
   await page.goto('/');
   await expect(page).toHaveURL(/\/login/);
 });
+
+test('board selector shows all seeded boards', async ({ page }) => {
+  await login(page);
+  await page.getByRole('button', { name: 'Switch board' }).click();
+  await expect(page.getByRole('menuitem', { name: 'My Project' })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'Design' })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'Operations' })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'Marketing' })).toBeVisible();
+});
+
+test('switching boards loads correct cards', async ({ page }) => {
+  await login(page);
+  await page.getByRole('button', { name: 'Switch board' }).click();
+  await page.getByRole('menuitem', { name: 'Design' }).click();
+  await expect(page.getByText('Design - Backlog task 1')).toBeVisible();
+  await page.getByRole('button', { name: 'Switch board' }).click();
+  await page.getByRole('menuitem', { name: 'My Project' }).click();
+  await expect(page.getByText('My Project - Backlog task 1')).toBeVisible();
+});
+
+test('create new board and confirm it is empty', async ({ page }) => {
+  await login(page);
+  await page.getByRole('button', { name: 'Switch board' }).click();
+  await page.getByText('+ New Board').click();
+  await page.getByRole('textbox', { name: 'New board name' }).fill('E2E Test Board');
+  await page.getByRole('button', { name: 'Add' }).click();
+  await expect(page.getByText('E2E Test Board')).toBeVisible();
+  await expect(page.getByText('Backlog')).toBeVisible();
+});
+
+test('selected board persists after page reload', async ({ page }) => {
+  await login(page);
+  await page.getByRole('button', { name: 'Switch board' }).click();
+  await page.getByRole('menuitem', { name: 'Operations' }).click();
+  await expect(page.getByText('Operations - Backlog task 1')).toBeVisible();
+  await page.reload();
+  await expect(page.getByText('Operations - Backlog task 1')).toBeVisible();
+});

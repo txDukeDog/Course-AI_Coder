@@ -27,7 +27,11 @@ public class BoardApiTests : IClassFixture<TestWebApplicationFactory>
 
     private async Task<JsonElement> GetBoardAsync()
     {
-        var res = await _client.GetAsync("/api/board");
+        var listRes = await _client.GetAsync("/api/boards");
+        Assert.Equal(HttpStatusCode.OK, listRes.StatusCode);
+        var firstId = JsonDocument.Parse(await listRes.Content.ReadAsStringAsync())
+            .RootElement.EnumerateArray().First().GetProperty("id").GetInt32();
+        var res = await _client.GetAsync($"/api/boards/{firstId}");
         Assert.Equal(HttpStatusCode.OK, res.StatusCode);
         return JsonDocument.Parse(await res.Content.ReadAsStringAsync()).RootElement;
     }
@@ -111,7 +115,6 @@ public class BoardApiTests : IClassFixture<TestWebApplicationFactory>
     }
 
     [Theory]
-    [InlineData("GET", "/api/board", null)]
     [InlineData("POST", "/api/cards", """{"columnId":1,"title":"x","details":""}""")]
     [InlineData("PUT", "/api/columns/1", """{"name":"x"}""")]
     [InlineData("PUT", "/api/cards/1", """{"title":"x","details":"","columnId":1,"position":0}""")]

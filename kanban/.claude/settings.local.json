@@ -35,7 +35,12 @@
       "PowerShell(code *)",
       "Bash(sqlite3 backend/kanban.db \".tables\")",
       "Bash(sqlite3 backend/kanban.db \".schema Cards\")",
-      "Bash(sqlite3 backend/kanban.db \"SELECT * FROM Cards;\")"
+      "Bash(sqlite3 backend/kanban.db \"SELECT * FROM Cards;\")",
+      "Bash(dotnet test *)",
+      "Bash(findstr /v \"node_modules\\\\|\\\\.next\\\\|out\\\\\\\\\")",
+      "Bash(npm test *)",
+      "Bash(npx tsc *)",
+      "Bash(grep -v \"__tests__\\\\|e2e\\\\\\\\\")"
     ]
   }
 }

@@ -77,38 +77,6 @@ app.MapPost("/api/auth/login", (LoginRequest req) =>
 
 app.MapPost("/api/auth/logout", () => Results.Ok());
 
-app.MapGet("/api/board", async (ClaimsPrincipal user, KanbanDbContext db) =>
-{
-    var username = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-    var dbUser = await db.Users.FirstOrDefaultAsync(u => u.Username == username);
-    if (dbUser == null) return Results.NotFound();
-
-    var board = await db.Boards
-        .Include(b => b.Columns.OrderBy(c => c.Position))
-            .ThenInclude(c => c.Cards.OrderBy(card => card.Position))
-        .FirstOrDefaultAsync(b => b.UserId == dbUser.Id);
-    if (board == null) return Results.NotFound();
-
-    return Results.Ok(new
-    {
-        id = board.Id,
-        name = board.Name,
-        columns = board.Columns.Select(col => new
-        {
-            id = col.Id,
-            name = col.Name,
-            position = col.Position,
-            cards = col.Cards.Select(card => new
-            {
-                id = card.Id,
-                title = card.Title,
-                details = card.Details,
-                position = card.Position
-            })
-        })
-    });
-}).RequireAuthorization();
-
 app.MapPut("/api/columns/{id:int}", async (int id, RenameColumnRequest req, ClaimsPrincipal user, KanbanDbContext db) =>
 {
     var username = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -180,6 +148,96 @@ app.MapDelete("/api/cards/{id:int}", async (int id, ClaimsPrincipal user, Kanban
     return Results.NoContent();
 }).RequireAuthorization();
 
+app.MapGet("/api/boards", async (ClaimsPrincipal user, KanbanDbContext db) =>
+{
+    var username = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    var dbUser = await db.Users.FirstOrDefaultAsync(u => u.Username == username);
+    if (dbUser == null) return Results.NotFound();
+
+    var boards = await db.Boards
+        .Where(b => b.UserId == dbUser.Id)
+        .OrderBy(b => b.Id)
+        .Select(b => new { id = b.Id, name = b.Name })
+        .ToListAsync();
+    return Results.Ok(boards);
+}).RequireAuthorization();
+
+app.MapGet("/api/boards/{id:int}", async (int id, ClaimsPrincipal user, KanbanDbContext db) =>
+{
+    var username = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    var board = await db.Boards
+        .Include(b => b.Columns.OrderBy(c => c.Position))
+            .ThenInclude(c => c.Cards.OrderBy(card => card.Position))
+        .Where(b => b.Id == id && b.User.Username == username)
+        .FirstOrDefaultAsync();
+    if (board == null) return Results.NotFound();
+
+    return Results.Ok(new
+    {
+        id = board.Id,
+        name = board.Name,
+        columns = board.Columns.Select(col => new
+        {
+            id = col.Id,
+            name = col.Name,
+            position = col.Position,
+            cards = col.Cards.Select(card => new
+            {
+                id = card.Id,
+                title = card.Title,
+                details = card.Details,
+                position = card.Position
+            })
+        })
+    });
+}).RequireAuthorization();
+
+app.MapPost("/api/boards", async (CreateBoardRequest req, ClaimsPrincipal user, KanbanDbContext db) =>
+{
+    var username = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    var dbUser = await db.Users.FirstOrDefaultAsync(u => u.Username == username);
+    if (dbUser == null) return Results.NotFound();
+
+    var board = new Board { UserId = dbUser.Id, Name = req.Name };
+    db.Boards.Add(board);
+    await db.SaveChangesAsync();
+
+    var columnNames = new[] { "Backlog", "Todo", "In Progress", "Review", "Done" };
+    for (var i = 0; i < columnNames.Length; i++)
+        db.Columns.Add(new Column { BoardId = board.Id, Name = columnNames[i], Position = i });
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/api/boards/{board.Id}", new { id = board.Id, name = board.Name });
+}).RequireAuthorization();
+
+app.MapPut("/api/boards/{id:int}", async (int id, RenameBoardRequest req, ClaimsPrincipal user, KanbanDbContext db) =>
+{
+    var username = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    var board = await db.Boards
+        .Where(b => b.Id == id && b.User.Username == username)
+        .FirstOrDefaultAsync();
+    if (board == null) return Results.NotFound();
+
+    board.Name = req.Name;
+    await db.SaveChangesAsync();
+    return Results.Ok(new { id = board.Id, name = board.Name });
+}).RequireAuthorization();
+
+app.MapDelete("/api/boards/{id:int}", async (int id, ClaimsPrincipal user, KanbanDbContext db) =>
+{
+    var username = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    var board = await db.Boards
+        .Include(b => b.Columns)
+            .ThenInclude(c => c.Cards)
+        .Where(b => b.Id == id && b.User.Username == username)
+        .FirstOrDefaultAsync();
+    if (board == null) return Results.NotFound();
+
+    db.Boards.Remove(board);
+    await db.SaveChangesAsync();
+    return Results.NoContent();
+}).RequireAuthorization();
+
 app.MapFallbackToFile("index.html");
 
 app.Run();
@@ -194,7 +252,15 @@ static async Task SeedAsync(KanbanDbContext db)
     db.Users.Add(user);
     await db.SaveChangesAsync();
 
-    var board = new Board { UserId = user.Id, Name = "My Project" };
+    await CreateBoardWithDataAsync(db, user.Id, "My Project");
+    await CreateBoardWithDataAsync(db, user.Id, "Design");
+    await CreateBoardWithDataAsync(db, user.Id, "Operations");
+    await CreateBoardWithDataAsync(db, user.Id, "Marketing");
+}
+
+static async Task CreateBoardWithDataAsync(KanbanDbContext db, int userId, string boardName)
+{
+    var board = new Board { UserId = userId, Name = boardName };
     db.Boards.Add(board);
     await db.SaveChangesAsync();
 
@@ -206,8 +272,8 @@ static async Task SeedAsync(KanbanDbContext db)
         await db.SaveChangesAsync();
 
         db.Cards.AddRange(
-            new Card { ColumnId = col.Id, Title = $"{columnNames[i]} task 1", Details = "Sample task", Position = 0 },
-            new Card { ColumnId = col.Id, Title = $"{columnNames[i]} task 2", Details = "Sample task", Position = 1 }
+            new Card { ColumnId = col.Id, Title = $"{boardName} - {columnNames[i]} task 1", Details = "Sample task", Position = 0 },
+            new Card { ColumnId = col.Id, Title = $"{boardName} - {columnNames[i]} task 2", Details = "Sample task", Position = 1 }
         );
     }
     await db.SaveChangesAsync();
@@ -215,6 +281,8 @@ static async Task SeedAsync(KanbanDbContext db)
 
 record LoginRequest(string Username, string Password);
 record RenameColumnRequest(string Name);
+record CreateBoardRequest(string Name);
+record RenameBoardRequest(string Name);
 record CreateCardRequest(int ColumnId, string Title, string Details);
 record UpdateCardRequest(string Title, string Details, int ColumnId, int Position);
 
