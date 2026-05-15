@@ -22,8 +22,6 @@ This project is building a Project Management App. Key features:
 
 For the MVP, there will only be a user sign in (hardcoded to 'user' and 'password') but the database will support multiple users for future.
 
-For the MVP, there will only be 1 Kanban board per signed in user.
-
 For the MVP, this will run locally (in a docker container)
 
 ## Technical Details
@@ -67,4 +65,5 @@ For the MVP, this will run locally (in a docker container)
 
 All documents for planning and executing this project will be in the docs/ directory.
 Please review the docs/PLAN.md document before proceeding.
-Ignore and wait to complete step 8 and further.
+Ignore and wait to complete step 8 and further witihin PLAN.md.
+Please continue with other PLAN_XXXXXX.md files.
